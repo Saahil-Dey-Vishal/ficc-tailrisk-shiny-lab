@@ -12,6 +12,15 @@ source("R/backtest.R")
 source("R/regime.R")
 source("R/pipeline.R")
 
+# Seed regime selectors before the first run, so run_pipeline() never receives NULL tickers.
+default_universe <- tryCatch(load_universe(), error = function(e) data.frame(ticker = c("TLT", "HYG", "LQD", "BIL")))
+ticker_choices <- sort(unique(default_universe$ticker))
+if (length(ticker_choices) == 0) ticker_choices <- c("TLT", "HYG", "LQD", "BIL")
+
+default_rates_ticker <- if ("TLT" %in% ticker_choices) "TLT" else ticker_choices[1]
+default_credit_ticker <- if ("HYG" %in% ticker_choices) "HYG" else ticker_choices[1]
+default_ig_ticker <- if ("LQD" %in% ticker_choices) "LQD" else ticker_choices[1]
+
 app_theme <- bs_theme(
   version = 5,
   bg = "#f5efe6",
@@ -37,9 +46,9 @@ ui <- page_sidebar(
     checkboxInput("use_echoice2", "Use echoice2 choice model", value = TRUE),
     checkboxInput("use_opt", "Use portfolio.optimization", value = TRUE),
     checkboxInput("use_regimes", "Use regime filters", value = TRUE),
-    selectInput("rates_ticker", "Rates regime ticker", choices = NULL),
-    selectInput("credit_ticker", "Credit regime ticker", choices = NULL),
-    selectInput("ig_ticker", "IG comparator ticker", choices = NULL),
+    selectInput("rates_ticker", "Rates regime ticker", choices = ticker_choices, selected = default_rates_ticker),
+    selectInput("credit_ticker", "Credit regime ticker", choices = ticker_choices, selected = default_credit_ticker),
+    selectInput("ig_ticker", "IG comparator ticker", choices = ticker_choices, selected = default_ig_ticker),
     numericInput("rate_threshold", "Rates regime threshold", value = 0, step = 0.0025),
     numericInput("credit_threshold", "Credit regime threshold", value = 0, step = 0.0025),
     actionButton("run", "Run Pipeline", class = "btn-primary")
@@ -103,39 +112,53 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, session) {
+  pick_or_default <- function(value, fallback) {
+    if (is.null(value) || length(value) == 0 || is.na(value) || !nzchar(value)) return(fallback)
+    value
+  }
+
   result <- eventReactive(input$run, {
-    run_pipeline(
-      start = input$dates[1],
-      end = input$dates[2],
-      max_weight = input$max_weight,
-      drawdown_limit = input$drawdown,
-      tail_window = input$tail_window,
-      momentum_window = input$mom_window,
-      n_factors = input$n_factors,
-      use_echoice2 = input$use_echoice2,
-      use_opt = input$use_opt,
-      use_regimes = input$use_regimes,
-      regime_rates_ticker = input$rates_ticker,
-      regime_credit_ticker = input$credit_ticker,
-      regime_ig_ticker = input$ig_ticker,
-      regime_rate_threshold = input$rate_threshold,
-      regime_credit_threshold = input$credit_threshold,
-      risk_off_ticker = "BIL"
+    tryCatch(
+      run_pipeline(
+        start = input$dates[1],
+        end = input$dates[2],
+        max_weight = input$max_weight,
+        drawdown_limit = input$drawdown,
+        tail_window = input$tail_window,
+        momentum_window = input$mom_window,
+        n_factors = input$n_factors,
+        use_echoice2 = input$use_echoice2,
+        use_opt = input$use_opt,
+        use_regimes = input$use_regimes,
+        regime_rates_ticker = pick_or_default(input$rates_ticker, default_rates_ticker),
+        regime_credit_ticker = pick_or_default(input$credit_ticker, default_credit_ticker),
+        regime_ig_ticker = pick_or_default(input$ig_ticker, default_ig_ticker),
+        regime_rate_threshold = input$rate_threshold,
+        regime_credit_threshold = input$credit_threshold,
+        risk_off_ticker = "BIL"
+      ),
+      error = function(e) {
+        showNotification(paste("Pipeline failed:", e$message), type = "error", duration = NULL)
+        NULL
+      }
     )
   }, ignoreInit = TRUE)
 
   observeEvent(result(), {
+    if (is.null(result())) return()
     ticks <- sort(unique(result()$signals$ticker))
+    if (length(ticks) == 0) return()
+
     updateSelectInput(session, "signal_ticker", choices = ticks, selected = ticks[1])
     updateSelectInput(session, "weight_ticker", choices = ticks, selected = ticks[1])
 
-    default_rates <- if ("TLT" %in% ticks) "TLT" else ticks[1]
-    default_credit <- if ("HYG" %in% ticks) "HYG" else ticks[1]
-    default_ig <- if ("LQD" %in% ticks) "LQD" else ticks[1]
+    selected_rates <- if (!is.null(input$rates_ticker) && input$rates_ticker %in% ticks) input$rates_ticker else if ("TLT" %in% ticks) "TLT" else ticks[1]
+    selected_credit <- if (!is.null(input$credit_ticker) && input$credit_ticker %in% ticks) input$credit_ticker else if ("HYG" %in% ticks) "HYG" else ticks[1]
+    selected_ig <- if (!is.null(input$ig_ticker) && input$ig_ticker %in% ticks) input$ig_ticker else if ("LQD" %in% ticks) "LQD" else ticks[1]
 
-    updateSelectInput(session, "rates_ticker", choices = ticks, selected = default_rates)
-    updateSelectInput(session, "credit_ticker", choices = ticks, selected = default_credit)
-    updateSelectInput(session, "ig_ticker", choices = ticks, selected = default_ig)
+    updateSelectInput(session, "rates_ticker", choices = ticks, selected = selected_rates)
+    updateSelectInput(session, "credit_ticker", choices = ticks, selected = selected_credit)
+    updateSelectInput(session, "ig_ticker", choices = ticks, selected = selected_ig)
   })
 
   output$universe_tbl <- renderDT({
@@ -174,7 +197,7 @@ server <- function(input, output, session) {
     fx <- result()$hofa$factors
     if (is.null(fx) || nrow(fx) == 0) return(NULL)
 
-    df <- data.frame(date = as.Date(index(fx)), coredata(fx))
+    df <- data.frame(date = as.Date(xts::index(fx)), xts::coredata(fx))
     df_long <- tidyr::pivot_longer(df, -date, names_to = "factor", values_to = "value")
 
     ggplot(df_long, aes(x = date, y = value, color = factor)) +
