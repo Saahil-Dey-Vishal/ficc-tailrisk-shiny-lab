@@ -92,3 +92,17 @@ http://localhost:3838
 
 ## Disclaimer
 This is a research/education tool. It is not investment advice.
+
+## One-file run (VS Code)
+Run everything (install/update + launch app) using one command:
+
+```bash
+cd "/Users/saahildey/ficc-tailrisk-shiny-lab"
+Rscript run_vscode.R
+```
+
+Optional custom port:
+
+```bash
+Rscript run_vscode.R 3839
+```
