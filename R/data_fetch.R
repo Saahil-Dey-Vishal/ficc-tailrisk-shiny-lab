@@ -17,7 +17,7 @@ fetch_weekly_ohlc <- function(tickers, from, to) {
 
     if (is.null(xt)) next
 
-    weekly_ohlc <- xts::to.weekly(xt, indexAt = "lastof", drop.time = TRUE)
+    weekly_ohlc <- xts::to.weekly(xt, indexAt = "endof", drop.time = TRUE)
 
     adj <- quantmod::Ad(xt)
     ep <- xts::endpoints(adj, on = "weeks")

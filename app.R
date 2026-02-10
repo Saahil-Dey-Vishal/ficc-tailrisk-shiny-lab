@@ -203,7 +203,7 @@ server <- function(input, output, session) {
     fx <- result()$hofa$factors
     if (is.null(fx) || nrow(fx) == 0) return(NULL)
 
-    df <- data.frame(date = as.Date(xts::index(fx)), xts::coredata(fx))
+    df <- data.frame(date = as.Date(zoo::index(fx)), zoo::coredata(fx))
     df_long <- tidyr::pivot_longer(df, -date, names_to = "factor", values_to = "value")
 
     ggplot(df_long, aes(x = date, y = value, color = factor)) +

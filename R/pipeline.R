@@ -48,13 +48,13 @@ run_pipeline <- function(start,
   hofa <- compute_hofa_factors(returns, n_factors = n_factors)
 
   returns_long <- tibble::tibble(
-    date = as.Date(xts::index(returns)),
+    date = as.Date(zoo::index(returns)),
     !!!as.data.frame(returns)
   )
   returns_long <- tidyr::pivot_longer(returns_long, -date, names_to = "ticker", values_to = "ret_w")
 
   momentum_long <- tibble::tibble(
-    date = as.Date(xts::index(momentum_xts)),
+    date = as.Date(zoo::index(momentum_xts)),
     !!!as.data.frame(momentum_xts)
   )
   momentum_long <- tidyr::pivot_longer(momentum_long, -date, names_to = "ticker", values_to = "momentum")

@@ -23,7 +23,7 @@ compute_regimes <- function(momentum_xts,
     if (!is.null(x) && tk %in% colnames(x)) {
       return(x[, tk])
     }
-    xts::xts(rep(NA_real_, nrow(x)), order.by = xts::index(x))
+    xts::xts(rep(NA_real_, nrow(x)), order.by = zoo::index(x))
   }
 
   rate_sig <- get_col(momentum_xts, rates_ticker)
@@ -36,7 +36,7 @@ compute_regimes <- function(momentum_xts,
   credit_sig[is.na(credit_sig)] <- 0
 
   data.frame(
-    date = as.Date(xts::index(momentum_xts)),
+    date = as.Date(zoo::index(momentum_xts)),
     rate_signal = rate_sig,
     credit_signal = credit_sig,
     rate_state = ifelse(rate_sig >= rate_threshold, "risk_on", "risk_off"),

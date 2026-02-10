@@ -7,17 +7,29 @@ simulate_portfolio <- function(returns_xts, weights_df, drawdown_limit = 0.08, r
   }
 
   tickers <- colnames(returns_xts)
-  dates <- as.Date(xts::index(returns_xts))
+  dates <- as.Date(zoo::index(returns_xts))
 
   wmat <- matrix(NA_real_, nrow = length(dates), ncol = length(tickers), dimnames = list(as.character(dates), tickers))
 
-  for (d in unique(weights_df$date)) {
-    row <- weights_df[weights_df$date == d, ]
+  weights_dates <- as.Date(weights_df$date)
+
+  for (d in unique(weights_dates)) {
+    if (is.na(d)) next
+
+    row_idx <- match(as.character(d), rownames(wmat))
+    if (is.na(row_idx)) next
+
+    row <- weights_df[weights_dates == d, ]
     if (nrow(row) == 0) next
+
     wvec <- rep(0, length(tickers))
     names(wvec) <- tickers
-    wvec[row$ticker] <- row$w
-    wmat[as.character(d), ] <- wvec
+
+    valid <- row$ticker %in% tickers
+    if (!any(valid)) next
+
+    wvec[row$ticker[valid]] <- row$w[valid]
+    wmat[row_idx, ] <- wvec
   }
 
   for (i in seq_len(nrow(wmat))) {
