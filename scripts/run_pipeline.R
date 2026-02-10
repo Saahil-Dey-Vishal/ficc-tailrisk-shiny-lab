@@ -4,6 +4,7 @@ source("R/features.R")
 source("R/choice_model.R")
 source("R/portfolio_opt.R")
 source("R/backtest.R")
+source("R/regime.R")
 source("R/pipeline.R")
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -20,6 +21,7 @@ res <- run_pipeline(
   n_factors = 3,
   use_echoice2 = TRUE,
   use_opt = TRUE,
+  use_regimes = TRUE,
   risk_off_ticker = "BIL"
 )
 

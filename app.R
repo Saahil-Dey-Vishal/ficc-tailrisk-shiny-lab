@@ -9,6 +9,7 @@ source("R/features.R")
 source("R/choice_model.R")
 source("R/portfolio_opt.R")
 source("R/backtest.R")
+source("R/regime.R")
 source("R/pipeline.R")
 
 app_theme <- bs_theme(
@@ -35,6 +36,7 @@ ui <- page_sidebar(
     numericInput("n_factors", "HOFA factors", value = 3, min = 1, max = 6, step = 1),
     checkboxInput("use_echoice2", "Use echoice2 choice model", value = TRUE),
     checkboxInput("use_opt", "Use portfolio.optimization", value = TRUE),
+    checkboxInput("use_regimes", "Use regime filters", value = TRUE),
     actionButton("run", "Run Pipeline", class = "btn-primary")
   ),
   navset_card_tab(
@@ -69,6 +71,15 @@ ui <- page_sidebar(
       )
     ),
     nav_panel(
+      "Regimes",
+      fluidRow(
+        column(12, plotOutput("regime_plot", height = 280))
+      ),
+      fluidRow(
+        column(12, DTOutput("regime_tbl"))
+      )
+    ),
+    nav_panel(
       "Backtest",
       fluidRow(
         column(12, plotOutput("backtest_plot", height = 320))
@@ -97,6 +108,7 @@ server <- function(input, output, session) {
       n_factors = input$n_factors,
       use_echoice2 = input$use_echoice2,
       use_opt = input$use_opt,
+      use_regimes = input$use_regimes,
       risk_off_ticker = "BIL"
     )
   }, ignoreInit = TRUE)
@@ -177,6 +189,28 @@ server <- function(input, output, session) {
     df <- result()$weights
     df <- df[df$date == max(df$date), ]
     datatable(df, options = list(pageLength = 15), rownames = FALSE)
+  })
+
+  output$regime_plot <- renderPlot({
+    req(result())
+    df <- result()$regimes
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+
+    df_long <- tidyr::pivot_longer(df, cols = c(rate_signal, credit_signal), names_to = "signal", values_to = "value")
+
+    ggplot(df_long, aes(x = date, y = value, color = signal)) +
+      geom_line(linewidth = 1) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "#1f1f1f") +
+      labs(title = "Regime Signals", x = NULL, y = "Signal") +
+      theme_minimal(base_size = 12)
+  })
+
+  output$regime_tbl <- renderDT({
+    req(result())
+    df <- result()$regimes
+    df <- df[order(df$date, decreasing = TRUE), ]
+    df <- head(df, 20)
+    datatable(df, options = list(pageLength = 10), rownames = FALSE)
   })
 
   output$backtest_plot <- renderPlot({

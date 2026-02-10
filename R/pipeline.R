@@ -21,6 +21,7 @@ run_pipeline <- function(start,
                          n_factors = 3,
                          use_echoice2 = TRUE,
                          use_opt = TRUE,
+                         use_regimes = TRUE,
                          risk_off_ticker = "BIL") {
   if (!requireNamespace("dplyr", quietly = TRUE) || !requireNamespace("tidyr", quietly = TRUE)) {
     stop("Packages 'dplyr' and 'tidyr' are required.")
@@ -42,13 +43,13 @@ run_pipeline <- function(start,
   hofa <- compute_hofa_factors(returns, n_factors = n_factors)
 
   returns_long <- tibble::tibble(
-    date = as.Date(index(returns)),
+    date = as.Date(xts::index(returns)),
     !!!as.data.frame(returns)
   )
   returns_long <- tidyr::pivot_longer(returns_long, -date, names_to = "ticker", values_to = "ret_w")
 
   momentum_long <- tibble::tibble(
-    date = as.Date(index(momentum_xts)),
+    date = as.Date(xts::index(momentum_xts)),
     !!!as.data.frame(momentum_xts)
   )
   momentum_long <- tidyr::pivot_longer(momentum_long, -date, names_to = "ticker", values_to = "momentum")
@@ -65,8 +66,16 @@ run_pipeline <- function(start,
   )
 
   choice_data <- build_choice_data(signals)
-  weights <- fit_choice_model(choice_data, max_weight = max_weight, use_echoice2 = use_echoice2)
-  weights <- optimize_portfolio_weights(returns, weights, max_weight = max_weight, use_pkg = use_opt, blend = 0.6)
+  weights_raw <- fit_choice_model(choice_data, max_weight = max_weight, use_echoice2 = use_echoice2)
+  weights_raw <- optimize_portfolio_weights(returns, weights_raw, max_weight = max_weight, use_pkg = use_opt, blend = 0.6)
+
+  regimes <- compute_regimes(momentum_xts)
+
+  if (use_regimes) {
+    weights <- apply_regime_filters(weights_raw, regimes, risk_off_ticker = risk_off_ticker)
+  } else {
+    weights <- weights_raw
+  }
 
   backtest <- simulate_portfolio(returns, weights, drawdown_limit = drawdown_limit, risk_off_ticker = risk_off_ticker)
 
@@ -78,6 +87,8 @@ run_pipeline <- function(start,
     spreads = spread_df,
     tail = tail_df,
     hofa = hofa,
+    regimes = regimes,
+    weights_raw = weights_raw,
     weights = weights,
     backtest = backtest
   )

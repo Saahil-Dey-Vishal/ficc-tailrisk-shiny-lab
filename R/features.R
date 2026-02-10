@@ -27,7 +27,7 @@ compute_liquidity_spread <- function(ohlc_list) {
     }
 
     df <- data.frame(
-      date = as.Date(index(sp)),
+      date = as.Date(xts::index(sp)),
       ticker = tk,
       spread_est = as.numeric(sp)
     )
@@ -52,7 +52,7 @@ compute_tail_risk_scores <- function(returns_xts, window = 52) {
     tail <- (-skew) + kurt
 
     res[[tk]] <- data.frame(
-      date = as.Date(index(r)),
+      date = as.Date(xts::index(r)),
       ticker = tk,
       tail_score = as.numeric(tail),
       skew = as.numeric(skew),

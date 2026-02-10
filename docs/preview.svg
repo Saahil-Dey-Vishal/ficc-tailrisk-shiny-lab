@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5efe6"/>
+      <stop offset="55%" stop-color="#f2e4d4"/>
+      <stop offset="100%" stop-color="#f8f2eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect x="40" y="40" width="1120" height="595" rx="18" fill="#ffffff" stroke="#e2d8cd" stroke-width="2"/>
+  <rect x="70" y="80" width="260" height="515" rx="12" fill="#f7f1ea" stroke="#e2d8cd"/>
+  <rect x="360" y="80" width="770" height="120" rx="12" fill="#ffffff" stroke="#e2d8cd"/>
+  <rect x="360" y="220" width="770" height="150" rx="12" fill="#ffffff" stroke="#e2d8cd"/>
+  <rect x="360" y="390" width="770" height="205" rx="12" fill="#ffffff" stroke="#e2d8cd"/>
+
+  <rect x="90" y="120" width="200" height="12" rx="6" fill="#0b5d3a"/>
+  <rect x="90" y="150" width="160" height="10" rx="5" fill="#c76b2e"/>
+  <rect x="90" y="190" width="210" height="8" rx="4" fill="#1a1a1a" opacity="0.25"/>
+  <rect x="90" y="215" width="180" height="8" rx="4" fill="#1a1a1a" opacity="0.2"/>
+  <rect x="90" y="240" width="150" height="8" rx="4" fill="#1a1a1a" opacity="0.2"/>
+
+  <path d="M390 300 C450 250, 520 280, 590 240 S720 210, 800 260 S930 330, 1100 290" fill="none" stroke="#0b5d3a" stroke-width="4"/>
+  <path d="M390 470 C470 430, 560 510, 640 470 S800 420, 900 470 S1040 540, 1100 500" fill="none" stroke="#b54b2f" stroke-width="4"/>
+
+  <text x="360" y="65" font-family="Space Grotesk, Arial, sans-serif" font-size="22" fill="#1a1a1a">FICC Liquidity-Aware Tail-Risk Lab</text>
+  <text x="360" y="115" font-family="Fira Code, monospace" font-size="12" fill="#5b5b5b">Signals • Regimes • Portfolio • Backtest</text>
+  <text x="90" y="570" font-family="Fira Code, monospace" font-size="12" fill="#7a6f66">Preview</text>
+</svg>

@@ -2,9 +2,12 @@ simulate_portfolio <- function(returns_xts, weights_df, drawdown_limit = 0.08, r
   if (!requireNamespace("dplyr", quietly = TRUE)) {
     stop("Package 'dplyr' is required.")
   }
+  if (!requireNamespace("xts", quietly = TRUE)) {
+    stop("Package 'xts' is required.")
+  }
 
   tickers <- colnames(returns_xts)
-  dates <- as.Date(index(returns_xts))
+  dates <- as.Date(xts::index(returns_xts))
 
   wmat <- matrix(NA_real_, nrow = length(dates), ncol = length(tickers), dimnames = list(as.character(dates), tickers))
 
