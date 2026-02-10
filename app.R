@@ -52,6 +52,9 @@ ui <- page_sidebar(
         column(8, plotOutput("signal_plot", height = 320))
       ),
       fluidRow(
+        column(12, plotOutput("hofa_plot", height = 240))
+      ),
+      fluidRow(
         column(12, DTOutput("signals_tbl"))
       )
     ),
@@ -132,6 +135,20 @@ server <- function(input, output, session) {
     ggplot(df_long, aes(x = date, y = value, color = metric)) +
       geom_line(linewidth = 1) +
       labs(title = paste("Signals:", input$signal_ticker), x = NULL, y = "Score") +
+      theme_minimal(base_size = 12)
+  })
+
+  output$hofa_plot <- renderPlot({
+    req(result())
+    fx <- result()$hofa$factors
+    if (is.null(fx) || nrow(fx) == 0) return(NULL)
+
+    df <- data.frame(date = as.Date(index(fx)), coredata(fx))
+    df_long <- tidyr::pivot_longer(df, -date, names_to = "factor", values_to = "value")
+
+    ggplot(df_long, aes(x = date, y = value, color = factor)) +
+      geom_line(linewidth = 1) +
+      labs(title = "HOFA Factor Signals", x = NULL, y = "Score") +
       theme_minimal(base_size = 12)
   })
 
