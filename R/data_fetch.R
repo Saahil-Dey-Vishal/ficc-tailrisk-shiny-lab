@@ -2,6 +2,9 @@ fetch_weekly_ohlc <- function(tickers, from, to) {
   if (!requireNamespace("quantmod", quietly = TRUE)) {
     stop("Package 'quantmod' is required for Yahoo Finance data.")
   }
+  if (!requireNamespace("xts", quietly = TRUE)) {
+    stop("Package 'xts' is required for weekly aggregation.")
+  }
 
   ohlc_list <- list()
   adj_list <- list()
@@ -14,11 +17,11 @@ fetch_weekly_ohlc <- function(tickers, from, to) {
 
     if (is.null(xt)) next
 
-    weekly_ohlc <- quantmod::to.weekly(xt, indexAt = "lastof", drop.time = TRUE)
+    weekly_ohlc <- xts::to.weekly(xt, indexAt = "lastof", drop.time = TRUE)
 
     adj <- quantmod::Ad(xt)
     ep <- xts::endpoints(adj, on = "weeks")
-    weekly_adj <- xts::period.apply(adj, INDEX = ep, FUN = last)
+    weekly_adj <- xts::period.apply(adj, INDEX = ep, FUN = function(x) x[NROW(x)])
 
     colnames(weekly_adj) <- tk
     ohlc_list[[tk]] <- weekly_ohlc
