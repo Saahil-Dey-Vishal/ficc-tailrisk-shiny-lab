@@ -22,6 +22,11 @@ res <- run_pipeline(
   use_echoice2 = TRUE,
   use_opt = TRUE,
   use_regimes = TRUE,
+  regime_rates_ticker = "TLT",
+  regime_credit_ticker = "HYG",
+  regime_ig_ticker = "LQD",
+  regime_rate_threshold = 0,
+  regime_credit_threshold = 0,
   risk_off_ticker = "BIL"
 )
 

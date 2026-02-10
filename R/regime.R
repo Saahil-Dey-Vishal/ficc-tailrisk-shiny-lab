@@ -1,7 +1,9 @@
 compute_regimes <- function(momentum_xts,
                             rates_ticker = "TLT",
                             credit_ticker = "HYG",
-                            ig_ticker = "LQD") {
+                            ig_ticker = "LQD",
+                            rate_threshold = 0,
+                            credit_threshold = 0) {
   if (!requireNamespace("xts", quietly = TRUE)) {
     stop("Package 'xts' is required for regime computation.")
   }
@@ -26,8 +28,8 @@ compute_regimes <- function(momentum_xts,
     date = as.Date(xts::index(momentum_xts)),
     rate_signal = rate_sig,
     credit_signal = credit_sig,
-    rate_state = ifelse(rate_sig >= 0, "risk_on", "risk_off"),
-    credit_state = ifelse(credit_sig >= 0, "risk_on", "risk_off")
+    rate_state = ifelse(rate_sig >= rate_threshold, "risk_on", "risk_off"),
+    credit_state = ifelse(credit_sig >= credit_threshold, "risk_on", "risk_off")
   )
 }
 

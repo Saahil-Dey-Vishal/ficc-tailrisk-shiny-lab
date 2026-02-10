@@ -37,6 +37,11 @@ ui <- page_sidebar(
     checkboxInput("use_echoice2", "Use echoice2 choice model", value = TRUE),
     checkboxInput("use_opt", "Use portfolio.optimization", value = TRUE),
     checkboxInput("use_regimes", "Use regime filters", value = TRUE),
+    selectInput("rates_ticker", "Rates regime ticker", choices = NULL),
+    selectInput("credit_ticker", "Credit regime ticker", choices = NULL),
+    selectInput("ig_ticker", "IG comparator ticker", choices = NULL),
+    numericInput("rate_threshold", "Rates regime threshold", value = 0, step = 0.0025),
+    numericInput("credit_threshold", "Credit regime threshold", value = 0, step = 0.0025),
     actionButton("run", "Run Pipeline", class = "btn-primary")
   ),
   navset_card_tab(
@@ -73,7 +78,8 @@ ui <- page_sidebar(
     nav_panel(
       "Regimes",
       fluidRow(
-        column(12, plotOutput("regime_plot", height = 280))
+        column(4, uiOutput("regime_summary")),
+        column(8, plotOutput("regime_plot", height = 280))
       ),
       fluidRow(
         column(12, DTOutput("regime_tbl"))
@@ -109,6 +115,11 @@ server <- function(input, output, session) {
       use_echoice2 = input$use_echoice2,
       use_opt = input$use_opt,
       use_regimes = input$use_regimes,
+      regime_rates_ticker = input$rates_ticker,
+      regime_credit_ticker = input$credit_ticker,
+      regime_ig_ticker = input$ig_ticker,
+      regime_rate_threshold = input$rate_threshold,
+      regime_credit_threshold = input$credit_threshold,
       risk_off_ticker = "BIL"
     )
   }, ignoreInit = TRUE)
@@ -117,6 +128,14 @@ server <- function(input, output, session) {
     ticks <- sort(unique(result()$signals$ticker))
     updateSelectInput(session, "signal_ticker", choices = ticks, selected = ticks[1])
     updateSelectInput(session, "weight_ticker", choices = ticks, selected = ticks[1])
+
+    default_rates <- if ("TLT" %in% ticks) "TLT" else ticks[1]
+    default_credit <- if ("HYG" %in% ticks) "HYG" else ticks[1]
+    default_ig <- if ("LQD" %in% ticks) "LQD" else ticks[1]
+
+    updateSelectInput(session, "rates_ticker", choices = ticks, selected = default_rates)
+    updateSelectInput(session, "credit_ticker", choices = ticks, selected = default_credit)
+    updateSelectInput(session, "ig_ticker", choices = ticks, selected = default_ig)
   })
 
   output$universe_tbl <- renderDT({
@@ -203,6 +222,27 @@ server <- function(input, output, session) {
       geom_hline(yintercept = 0, linetype = "dashed", color = "#1f1f1f") +
       labs(title = "Regime Signals", x = NULL, y = "Signal") +
       theme_minimal(base_size = 12)
+  })
+
+  output$regime_summary <- renderUI({
+    req(result())
+    df <- result()$regimes
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+
+    latest <- df[which.max(df$date), ]
+    rate_counts <- table(df$rate_state)
+    credit_counts <- table(df$credit_state)
+
+    bslib::card(
+      bslib::card_header("Regime Summary"),
+      bslib::card_body(
+        tags$p(tags$strong("Latest rates:"), paste(latest$rate_state)),
+        tags$p(tags$strong("Latest credit:"), paste(latest$credit_state)),
+        tags$hr(),
+        tags$p(tags$strong("Rates counts:"), paste(names(rate_counts), rate_counts, collapse = " | ")),
+        tags$p(tags$strong("Credit counts:"), paste(names(credit_counts), credit_counts, collapse = " | "))
+      )
+    )
   })
 
   output$regime_tbl <- renderDT({

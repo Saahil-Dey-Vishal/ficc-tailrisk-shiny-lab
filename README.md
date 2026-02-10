@@ -80,6 +80,7 @@ http://localhost:3838
 - If `bidask`, `hofa`/`HOFA`, `echoice2`, or `portfolio.optimization` are not installed, the system
   falls back to deterministic heuristics so the app still runs.
 - Regime signals use weekly momentum on `TLT` (rates) and `HYG - LQD` (credit).
+- Regime tickers and thresholds are configurable in the sidebar.
 - The drawdown guardrail uses a **next-week risk-off switch** into `BIL` after a breach.
 
 ## Structure

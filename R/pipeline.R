@@ -22,6 +22,11 @@ run_pipeline <- function(start,
                          use_echoice2 = TRUE,
                          use_opt = TRUE,
                          use_regimes = TRUE,
+                         regime_rates_ticker = "TLT",
+                         regime_credit_ticker = "HYG",
+                         regime_ig_ticker = "LQD",
+                         regime_rate_threshold = 0,
+                         regime_credit_threshold = 0,
                          risk_off_ticker = "BIL") {
   if (!requireNamespace("dplyr", quietly = TRUE) || !requireNamespace("tidyr", quietly = TRUE)) {
     stop("Packages 'dplyr' and 'tidyr' are required.")
@@ -69,7 +74,14 @@ run_pipeline <- function(start,
   weights_raw <- fit_choice_model(choice_data, max_weight = max_weight, use_echoice2 = use_echoice2)
   weights_raw <- optimize_portfolio_weights(returns, weights_raw, max_weight = max_weight, use_pkg = use_opt, blend = 0.6)
 
-  regimes <- compute_regimes(momentum_xts)
+  regimes <- compute_regimes(
+    momentum_xts,
+    rates_ticker = regime_rates_ticker,
+    credit_ticker = regime_credit_ticker,
+    ig_ticker = regime_ig_ticker,
+    rate_threshold = regime_rate_threshold,
+    credit_threshold = regime_credit_threshold
+  )
 
   if (use_regimes) {
     weights <- apply_regime_filters(weights_raw, regimes, risk_off_ticker = risk_off_ticker)
