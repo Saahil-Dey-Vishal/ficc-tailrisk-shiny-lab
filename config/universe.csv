@@ -1,0 +1,15 @@
+ticker,asset_class,sleeve,description
+AGG,FI,Rates & Core,US Aggregate Bond
+BIL,FI,Cash,T-Bill (1-3m)
+SHY,FI,Rates,1-3Y Treasuries
+IEF,FI,Rates,7-10Y Treasuries
+TLT,FI,Rates,20+Y Treasuries
+TIP,FI,Inflation,TIPS
+MBB,FI,MBS,Mortgage-Backed Securities
+LQD,FI,IG Credit,Investment Grade Corp
+HYG,FI,HY Credit,High Yield Corp
+EMB,FI,EM Debt,EM USD Sovereign
+MUB,FI,Munis,Municipal Bonds
+FLOT,FI,Floaters,Floating Rate Notes
+USDU,FX,FX Basket,USD Basket
+GSG,Commodities,Broad Commodities,Commodity Basket
