@@ -7,14 +7,12 @@
 [![Run Local](https://img.shields.io/badge/Run-Local-0b5d3a)](#quick-start)
 [![Run Docker](https://img.shields.io/badge/Run-Docker-0b5d3a)](#docker)
 
-A weekly, Friday-close portfolio research lab for FICC ETF sleeves using Yahoo Finance data. It blends
-liquidity estimates, tail-risk structure, discrete trade sizing, and portfolio optimization into a
-single Shiny dashboard, then paper-trades **in simulation** (no broker connection).
+A weekly, Friday-close portfolio research lab for cross-asset allocation using institutionally traded, high-liquidity ETFs from Yahoo Finance. It blends liquidity estimates, tail-risk structure, discrete trade sizing, and portfolio optimization into a single Shiny dashboard, then paper-trades **in simulation** (no broker connection).
 
 ![App preview](docs/preview.svg)
 
 ## Project purpose
-This project is designed to help external users, researchers, and portfolio teams evaluate weekly FICC allocation decisions in a structured way.
+This project is designed to help external users, researchers, and portfolio teams evaluate weekly cross-asset allocation decisions in a structured way.
 
 It answers five practical questions:
 1. What should we own this week?
@@ -24,7 +22,7 @@ It answers five practical questions:
 5. Are drawdown controls working as expected?
 
 ## Terminology (plain English)
-- `FICC`: Fixed Income, Currencies, and Commodities. In this app, FICC exposure is represented with liquid ETFs.
+- `FICC`: Fixed Income, Currencies, and Commodities. In this app, FICC is modeled with high-liquidity ETF proxies commonly used by banks and asset managers.
 - `Tail risk`: Risk of rare but severe portfolio losses that basic volatility metrics may not capture.
 - `Liquidity`: How easy and cheap it is to trade an instrument without moving its price too much.
 - `Regime`: A market state (for example, risk-on or risk-off) inferred from rates and credit behavior.
@@ -34,6 +32,7 @@ It answers five practical questions:
 ## Why this is unique
 Most strategy demos focus only on returns or prediction accuracy. This project integrates:
 - Return signals
+- Institutional liquidity-biased ETF universe
 - Liquidity-aware constraints
 - Tail-risk features
 - Regime-aware filtering
@@ -62,8 +61,13 @@ It is intended to reduce avoidable losses and improve governance quality, not ju
 - Max drawdown guardrail (8% default) that shifts to BIL when breached
 
 ## ETF universe
-The default universe targets liquid FICC sleeves plus FX and commodities proxies:
-`AGG, BIL, SHY, IEF, TLT, TIP, MBB, LQD, HYG, EMB, MUB, FLOT, USDU, GSG`
+The default universe is intentionally liquidity-biased and focused on ETFs widely used by banks and asset managers for implementation and risk monitoring.
+
+Asset classes:
+`FI, FX, Commodities, Equities, Real Assets, Cash`
+
+Representative tickers:
+`AGG, BND, BIL, IEF, TLT, LQD, HYG, EMB, UUP, GLD, USO, SPY, QQQ, EFA, EEM, VNQ`
 
 Edit `config/universe.csv` to customize.
 
@@ -116,6 +120,7 @@ http://localhost:3838
 
 ## Notes
 - Data is pulled from Yahoo Finance via `quantmod` and resampled to weekly bars.
+- The default universe emphasizes institutionally used, high-volume ETFs to keep analysis realistic.
 - If `bidask`, `hofa`/`HOFA`, `echoice2`, or `portfolio.optimization` are not installed, the system
   falls back to deterministic heuristics so the app still runs.
 - Regime signals use weekly momentum on `TLT` (rates) and `HYG - LQD` (credit).

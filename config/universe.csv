@@ -1,15 +1,31 @@
 ticker,asset_class,sleeve,description
-AGG,FI,Rates & Core,US Aggregate Bond
-BIL,FI,Cash,T-Bill (1-3m)
+AGG,FI,Core Bonds,US Aggregate Bond
+BND,FI,Core Bonds,Vanguard Total Bond Market
+BIL,Cash,Liquidity,T-Bill (1-3m)
 SHY,FI,Rates,1-3Y Treasuries
+IEI,FI,Rates,3-7Y Treasuries
 IEF,FI,Rates,7-10Y Treasuries
 TLT,FI,Rates,20+Y Treasuries
 TIP,FI,Inflation,TIPS
-MBB,FI,MBS,Mortgage-Backed Securities
-LQD,FI,IG Credit,Investment Grade Corp
-HYG,FI,HY Credit,High Yield Corp
-EMB,FI,EM Debt,EM USD Sovereign
+MBB,FI,MBS,Agency Mortgage-Backed Securities
+LQD,FI,IG Credit,Investment Grade Corporate
+VCIT,FI,IG Credit,Intermediate Investment Grade Corporate
+HYG,FI,HY Credit,High Yield Corporate
+JNK,FI,HY Credit,High Yield Corporate
+EMB,FI,EM Debt,Emerging Market USD Sovereign
 MUB,FI,Munis,Municipal Bonds
 FLOT,FI,Floaters,Floating Rate Notes
-USDU,FX,FX Basket,USD Basket
-GSG,Commodities,Broad Commodities,Commodity Basket
+UUP,FX,USD Long,US Dollar Index Bullish
+FXE,FX,G10 FX,Euro vs USD
+FXY,FX,G10 FX,Japanese Yen vs USD
+DBC,Commodities,Broad Commodities,Diversified Commodity ETF
+GLD,Commodities,Precious Metals,Gold
+SLV,Commodities,Precious Metals,Silver
+USO,Commodities,Energy,Crude Oil
+SPY,Equities,US Large Cap,S&P 500
+QQQ,Equities,US Growth,Nasdaq 100
+IWM,Equities,US Small Cap,Russell 2000
+EFA,Equities,Developed ex-US,MSCI EAFE
+EEM,Equities,Emerging Markets,MSCI Emerging Markets
+VNQ,Real Assets,REITs,US Real Estate
+IYR,Real Assets,REITs,US Real Estate (iShares)

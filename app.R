@@ -62,8 +62,8 @@ ui <- page_sidebar(
           bslib::card(
             bslib::card_header("Project Purpose"),
             bslib::card_body(
-              tags$p("This project helps analysts test weekly FICC allocation decisions before real capital deployment."),
-              tags$p("It combines market behavior, liquidity cost, and risk controls in one workflow so decisions are transparent and auditable.")
+              tags$p("This project helps analysts test weekly cross-asset allocation decisions using institutionally traded, high-liquidity ETF proxies before real capital deployment."),
+              tags$p("It combines market behavior, liquidity cost, and risk controls in one workflow so decisions are transparent, explainable, and auditable.")
             )
           )
         )
@@ -75,6 +75,7 @@ ui <- page_sidebar(
             bslib::card_header("Why It Is Unique"),
             bslib::card_body(
               tags$ul(
+                tags$li("Institutional liquidity-biased ETF universe, not niche instruments."),
                 tags$li("Liquidity-aware portfolio construction, not only return forecasting."),
                 tags$li("Tail-risk and regime modeling integrated into allocation decisions."),
                 tags$li("End-to-end weekly decision pipeline in one app: data -> signal -> weight -> drawdown control.")
@@ -103,7 +104,7 @@ ui <- page_sidebar(
             bslib::card_header("Terminology (Plain English)"),
             bslib::card_body(
               tags$dl(
-                tags$dt("FICC"), tags$dd("Fixed Income, Currencies, and Commodities. In this app, FICC is represented through liquid ETFs."),
+                tags$dt("FICC"), tags$dd("Fixed Income, Currencies, and Commodities. In this app, FICC is represented through high-liquidity ETF proxies used by institutional teams."),
                 tags$dt("Tail Risk"), tags$dd("Risk of rare, large losses that normal volatility metrics may miss."),
                 tags$dt("Liquidity"), tags$dd("How easily an asset can be traded without large transaction cost or price impact."),
                 tags$dt("Regime"), tags$dd("A market state, such as risk-on or risk-off, based on rates and credit signals."),
@@ -121,7 +122,7 @@ ui <- page_sidebar(
             bslib::card_header("Industry-Level Use Cases"),
             bslib::card_body(
               tags$ul(
-                tags$li("Multi-asset allocation teams prototyping weekly tactical sleeves."),
+                tags$li("Bank and asset-manager multi-asset teams prototyping weekly tactical sleeves."),
                 tags$li("Risk teams stress-testing drawdown controls under different regimes."),
                 tags$li("Portfolio managers comparing momentum, tail-risk, and liquidity-aware weighting frameworks."),
                 tags$li("Research teams building explainable model governance artifacts for investment committees.")
@@ -138,6 +139,7 @@ ui <- page_sidebar(
             bslib::card_body(
               tags$ol(
                 tags$li("Set date range and risk parameters in the left sidebar."),
+                tags$li("Universe is pre-curated to high-volume institutional ETFs; adjust config/universe.csv if needed."),
                 tags$li("Click 'Run Pipeline' to generate signals, weights, and backtest outputs."),
                 tags$li("Review tabs in order: Universe -> Signals -> Portfolio -> Regimes -> Backtest."),
                 tags$li("Use the Drawdown chart and Regime Summary to validate risk behavior before decisions.")
