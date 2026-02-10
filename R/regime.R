@@ -8,6 +8,17 @@ compute_regimes <- function(momentum_xts,
     stop("Package 'xts' is required for regime computation.")
   }
 
+  to_scalar_ticker <- function(x, fallback) {
+    if (is.null(x) || length(x) == 0) return(fallback)
+    x <- as.character(x[[1]])
+    if (is.na(x) || !nzchar(x)) return(fallback)
+    x
+  }
+
+  rates_ticker <- to_scalar_ticker(rates_ticker, "TLT")
+  credit_ticker <- to_scalar_ticker(credit_ticker, "HYG")
+  ig_ticker <- to_scalar_ticker(ig_ticker, "LQD")
+
   get_col <- function(x, tk) {
     if (!is.null(x) && tk %in% colnames(x)) {
       return(x[, tk])

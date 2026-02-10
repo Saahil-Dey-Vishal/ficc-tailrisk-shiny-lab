@@ -112,9 +112,15 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, session) {
+  first_scalar <- function(value) {
+    if (is.null(value) || length(value) == 0) return(NA_character_)
+    as.character(value[[1]])
+  }
+
   pick_or_default <- function(value, fallback) {
-    if (is.null(value) || length(value) == 0 || is.na(value) || !nzchar(value)) return(fallback)
-    value
+    x <- first_scalar(value)
+    if (is.na(x) || !nzchar(x)) return(fallback)
+    x
   }
 
   result <- eventReactive(input$run, {
@@ -152,9 +158,9 @@ server <- function(input, output, session) {
     updateSelectInput(session, "signal_ticker", choices = ticks, selected = ticks[1])
     updateSelectInput(session, "weight_ticker", choices = ticks, selected = ticks[1])
 
-    selected_rates <- if (!is.null(input$rates_ticker) && input$rates_ticker %in% ticks) input$rates_ticker else if ("TLT" %in% ticks) "TLT" else ticks[1]
-    selected_credit <- if (!is.null(input$credit_ticker) && input$credit_ticker %in% ticks) input$credit_ticker else if ("HYG" %in% ticks) "HYG" else ticks[1]
-    selected_ig <- if (!is.null(input$ig_ticker) && input$ig_ticker %in% ticks) input$ig_ticker else if ("LQD" %in% ticks) "LQD" else ticks[1]
+    selected_rates <- pick_or_default(input$rates_ticker, if ("TLT" %in% ticks) "TLT" else ticks[1])
+    selected_credit <- pick_or_default(input$credit_ticker, if ("HYG" %in% ticks) "HYG" else ticks[1])
+    selected_ig <- pick_or_default(input$ig_ticker, if ("LQD" %in% ticks) "LQD" else ticks[1])
 
     updateSelectInput(session, "rates_ticker", choices = ticks, selected = selected_rates)
     updateSelectInput(session, "credit_ticker", choices = ticks, selected = selected_credit)
