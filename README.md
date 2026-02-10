@@ -13,6 +13,45 @@ single Shiny dashboard, then paper-trades **in simulation** (no broker connectio
 
 ![App preview](docs/preview.svg)
 
+## Project purpose
+This project is designed to help external users, researchers, and portfolio teams evaluate weekly FICC allocation decisions in a structured way.
+
+It answers five practical questions:
+1. What should we own this week?
+2. How much should we own?
+3. What is likely to be expensive to trade?
+4. Are we in a risk-on or risk-off market state?
+5. Are drawdown controls working as expected?
+
+## Terminology (plain English)
+- `FICC`: Fixed Income, Currencies, and Commodities. In this app, FICC exposure is represented with liquid ETFs.
+- `Tail risk`: Risk of rare but severe portfolio losses that basic volatility metrics may not capture.
+- `Liquidity`: How easy and cheap it is to trade an instrument without moving its price too much.
+- `Regime`: A market state (for example, risk-on or risk-off) inferred from rates and credit behavior.
+- `Drawdown`: Percentage decline from the portfolio's previous peak.
+- `Risk-off switch`: Rule that shifts to safer exposure (`BIL`) when drawdown breaches the configured threshold.
+
+## Why this is unique
+Most strategy demos focus only on returns or prediction accuracy. This project integrates:
+- Return signals
+- Liquidity-aware constraints
+- Tail-risk features
+- Regime-aware filtering
+- Drawdown guardrails
+
+That makes it closer to production portfolio workflow than a single-signal toy model.
+
+## Ultimate purpose
+The ultimate objective is to produce a repeatable, explainable, risk-aware weekly allocation process that can be reviewed by humans before deployment.
+
+It is intended to reduce avoidable losses and improve governance quality, not just maximize backtest return.
+
+## Industry-level use cases
+- Multi-asset teams testing tactical fixed-income and macro sleeves.
+- Risk management teams validating regime and drawdown controls.
+- Quant research teams prototyping portfolio construction logic before OMS integration.
+- Investment committees reviewing transparent model behavior with auditable outputs.
+
 ## What it does
 - Weekly rebalancing on Friday close
 - Liquidity-aware signal scoring (bid-ask spread estimates)

@@ -55,6 +55,99 @@ ui <- page_sidebar(
   ),
   navset_card_tab(
     nav_panel(
+      "About",
+      fluidRow(
+        column(
+          12,
+          bslib::card(
+            bslib::card_header("Project Purpose"),
+            bslib::card_body(
+              tags$p("This project helps analysts test weekly FICC allocation decisions before real capital deployment."),
+              tags$p("It combines market behavior, liquidity cost, and risk controls in one workflow so decisions are transparent and auditable.")
+            )
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          6,
+          bslib::card(
+            bslib::card_header("Why It Is Unique"),
+            bslib::card_body(
+              tags$ul(
+                tags$li("Liquidity-aware portfolio construction, not only return forecasting."),
+                tags$li("Tail-risk and regime modeling integrated into allocation decisions."),
+                tags$li("End-to-end weekly decision pipeline in one app: data -> signal -> weight -> drawdown control.")
+              )
+            )
+          )
+        ),
+        column(
+          6,
+          bslib::card(
+            bslib::card_header("Ultimate Purpose"),
+            bslib::card_body(
+              tags$ul(
+                tags$li("Reduce avoidable drawdowns from unstable market regimes."),
+                tags$li("Create repeatable and explainable portfolio decisions."),
+                tags$li("Provide a practical research-to-operations framework for fixed-income style allocation.")
+              )
+            )
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          12,
+          bslib::card(
+            bslib::card_header("Terminology (Plain English)"),
+            bslib::card_body(
+              tags$dl(
+                tags$dt("FICC"), tags$dd("Fixed Income, Currencies, and Commodities. In this app, FICC is represented through liquid ETFs."),
+                tags$dt("Tail Risk"), tags$dd("Risk of rare, large losses that normal volatility metrics may miss."),
+                tags$dt("Liquidity"), tags$dd("How easily an asset can be traded without large transaction cost or price impact."),
+                tags$dt("Regime"), tags$dd("A market state, such as risk-on or risk-off, based on rates and credit signals."),
+                tags$dt("Drawdown"), tags$dd("Percentage decline from the portfolio's previous peak value."),
+                tags$dt("Risk-Off Switch"), tags$dd("Automatic de-risking behavior that shifts exposure toward BIL when drawdown limits are breached.")
+              )
+            )
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          12,
+          bslib::card(
+            bslib::card_header("Industry-Level Use Cases"),
+            bslib::card_body(
+              tags$ul(
+                tags$li("Multi-asset allocation teams prototyping weekly tactical sleeves."),
+                tags$li("Risk teams stress-testing drawdown controls under different regimes."),
+                tags$li("Portfolio managers comparing momentum, tail-risk, and liquidity-aware weighting frameworks."),
+                tags$li("Research teams building explainable model governance artifacts for investment committees.")
+              )
+            )
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          12,
+          bslib::card(
+            bslib::card_header("How To Use This App"),
+            bslib::card_body(
+              tags$ol(
+                tags$li("Set date range and risk parameters in the left sidebar."),
+                tags$li("Click 'Run Pipeline' to generate signals, weights, and backtest outputs."),
+                tags$li("Review tabs in order: Universe -> Signals -> Portfolio -> Regimes -> Backtest."),
+                tags$li("Use the Drawdown chart and Regime Summary to validate risk behavior before decisions.")
+              )
+            )
+          )
+        )
+      )
+    ),
+    nav_panel(
       "Universe",
       fluidRow(
         column(7, DTOutput("universe_tbl")),
